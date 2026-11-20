@@ -1,0 +1,25 @@
+{% extends "maestra.html" %}
+{% block titulo %}Ingresar{% endblock %}
+{% block contenido %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Ingresar</h1>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <div class="field">
+                {{ form.username.label(class="label") }}
+                <div class="control">{{ form.username(class="input", autocomplete="username") }}</div>
+                {% for error in form.username.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="field">
+                {{ form.password.label(class="label") }}
+                <div class="control">{{ form.password(class="input", autocomplete="current-password") }}</div>
+                {% for error in form.password.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="field">{{ form.remember_me() }} {{ form.remember_me.label }}</div>
+            <div class="field">{{ form.submit(class="button is-primary") }}</div>
+        </form>
+        <p>¿No tienes cuenta? <a href="{{ url_for('auth.register') }}">Regístrate</a>.</p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "maestra.html" %}
+{% block titulo %}Crear cuenta{% endblock %}
+{% block contenido %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Crear cuenta</h1>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <div class="field">
+                {{ form.username.label(class="label") }}
+                <div class="control">{{ form.username(class="input", autocomplete="username") }}</div>
+                {% for error in form.username.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="field">
+                {{ form.email.label(class="label") }}
+                <div class="control">{{ form.email(class="input", autocomplete="email") }}</div>
+                {% for error in form.email.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="field">
+                {{ form.password.label(class="label") }}
+                <div class="control">{{ form.password(class="input", autocomplete="new-password") }}</div>
+                {% for error in form.password.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="field">
+                {{ form.confirm_password.label(class="label") }}
+                <div class="control">{{ form.confirm_password(class="input", autocomplete="new-password") }}</div>
+                {% for error in form.confirm_password.errors %}<p class="help is-danger">{{ error }}</p>{% endfor %}
+            </div>
+            <div class="field">{{ form.submit(class="button is-primary") }}</div>
+        </form>
+        <p>¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Ingresar</a>.</p>
+    </div>
+</section>
+{% endblock %}
