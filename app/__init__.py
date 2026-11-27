@@ -14,12 +14,17 @@ app = Flask(
     static_folder=os.path.join(project_root, 'static'),
 )
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL',
-    'mysql+pymysql://root@localhost:3306/juegos',
+database_url = os.environ.get('DATABASE_URL')
+if os.environ.get('FLASK_ENV') == 'production' and not database_url:
+    raise RuntimeError('DATABASE_URL must be set in production.')
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or (
+    'mysql+pymysql://root@localhost:3306/juegos'
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
+secret_key = os.environ.get('SECRET_KEY')
+if os.environ.get('FLASK_ENV') == 'production' and not secret_key:
+    raise RuntimeError('SECRET_KEY must be set in production.')
+app.config['SECRET_KEY'] = secret_key or secrets.token_hex(32)
 
 # Inicializamos la base de datos con la app
 db.init_app(app)
@@ -67,7 +72,7 @@ def guardar_juego():
 
 @app.route("/eliminar_juego", methods=["POST"])
 @login_required
-def eliminar_juego_ruta():
+def eliminar_juego():
     controlador_juegos.eliminar_juego(request.form["id"])
     return redirect(url_for('juegos'))
 

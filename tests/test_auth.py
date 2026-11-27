@@ -3,7 +3,7 @@ import unittest
 
 os.environ['DATABASE_URL'] = 'sqlite://'
 from app import app, db
-from models import User
+from models import Juego, User
 
 
 class AuthenticationTests(unittest.TestCase):
@@ -22,6 +22,7 @@ class AuthenticationTests(unittest.TestCase):
         self.client = app.test_client()
         with app.app_context():
             db.session.query(User).delete()
+            db.session.query(Juego).delete()
             db.session.commit()
 
     def test_game_routes_redirect_anonymous_users_to_login(self):
@@ -83,6 +84,32 @@ class AuthenticationTests(unittest.TestCase):
         self.assertTrue(
             self.client.get('/juegos').headers['Location'].startswith('/auth/login')
         )
+
+    def test_game_list_renders_when_games_exist(self):
+        response = self.client.post(
+            '/auth/register',
+            data={
+                'username': 'miley',
+                'email': 'miley@example.com',
+                'password': 'correct-horse-battery',
+                'confirm_password': 'correct-horse-battery',
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+
+        with app.app_context():
+            db.session.add(
+                Juego(
+                    nombre='Test deployment',
+                    descripcion='Production list check',
+                    precio=19,
+                )
+            )
+            db.session.commit()
+
+        response = self.client.get('/juegos')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Test deployment', response.data)
 
 
 if __name__ == '__main__':
